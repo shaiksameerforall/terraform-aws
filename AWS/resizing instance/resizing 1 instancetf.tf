@@ -13,7 +13,7 @@ provider "aws" {
 
 variable "aws_region" {
   type    = string
-  default = "us-east-1"
+  default = "eu-central-1"
 }
 
 variable "instance_id" {
@@ -23,7 +23,7 @@ variable "instance_id" {
 
 variable "new_instance_type" {
   type        = string
-  default     = "t3.medium"
+  default     = "t3.large"
   description = "Desired new instance type"
 }
 

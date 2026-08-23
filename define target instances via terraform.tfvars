@@ -1,4 +1,4 @@
-aws_region = "us-east-1"
+aws_region = "eu-central-1"
 
 instances = {
   "i-0aaa1111bbbb2222c" = "m6i.large"
