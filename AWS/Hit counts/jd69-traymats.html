@@ -1,114 +1,101 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Device Redirect</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Device Redirect</title>
 
-<script>
-function identifyOS() {
+  <script>
+    function identifyOS() {
+      const ua = navigator.userAgent || "";
+      console.log("UA:", ua);
 
-  const ua = navigator.userAgent || "";
+      // iPhone / iPad
+      const isIOS =
+        /iPhone|iPad|iPod/i.test(ua) ||
+        (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
-  console.log("UA:", ua);
+      // Android
+      const isAndroid = /Android/i.test(ua);
 
-  // iPhone / iPad
-  const isIOS =
-    /iPhone|iPad|iPod/i.test(ua) ||
-    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+      // Strict Huawei detection
+      const isHuawei = /HUAWEI/i.test(ua);
 
-  // Android
-  const isAndroid = /Android/i.test(ua);
+      // Detection order
+      if (isIOS) {
+        return 'iPhone';
+      }
 
-  // VERY STRICT Huawei detection
-  // Only detect Huawei if manufacturer exists clearly
-  const isHuawei =
-    /HUAWEI/i.test(ua);
+      if (isAndroid && isHuawei) {
+        return 'Huawei';
+      }
 
-  // Detection order
-  if (isIOS) {
-    return 'iPhone';
-  }
+      // Normal Android (syntax fixed)
+      if (isAndroid && !isHuawei) {
+        return 'Android';
+      }
 
-  // Huawei only if explicitly Huawei
-  if (isAndroid && isHuawei) {
-    return 'Huawei';
-  }
+      // Desktop fallback
+      if (/Windows/i.test(ua)) return 'Windows';
+      if (/Macintosh|Mac OS X/i.test(ua)) return 'MacOS';
+      if (/Linux/i.test(ua)) return 'Linux';
 
-  // Normal Android
-  if (isAndroid !&& isHuawei) {
-    return 'Android';
-  }
-
-  return 'Unknown';
-}
-
-// Tracking
-function trackHit(os) {
-
-  const url =
-    "https://u2m2i4dbrd.execute-api.eu-central-1.amazonaws.com/prod/track" +
-    "?file=" + encodeURIComponent("bus-albaikapplink") +
-    "&os=" + encodeURIComponent(os);
-
-  const img = new Image();
-  img.src = url;
-}
-
-window.onload = function () {
-
-  // Disable test mode
-  const TEST_MODE = null;
-
-  const os = TEST_MODE || identifyOS();
-
-  console.log("Detected OS:", os);
-
-  // Track
-  trackHit(os);
-
-  setTimeout(() => {
-
-    // Huawei AppGallery
-    if (os === 'Huawei') {
-
-      window.location.replace(
-        "https://appgallery.huawei.com/app/C115900563"
-      );
+      return 'Unknown';
     }
 
-    // Android Play Store
-    else if (os === 'Android') {
+    // Tracking
+    function trackHit(os) {
+      const url =
+        "https://u2m2i4dbrd.execute-api.eu-central-1.amazonaws.com/prod/track" +
+        "?file=" + encodeURIComponent("jd69-traymats") +
+        "&os=" + encodeURIComponent(os);
 
-      window.location.replace(
-        "https://play.google.com/store/apps/details?id=com.albaik.customer&hl=en"
-      );
+      // Send tracking hit via beacon or Image
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon(url);
+      } else {
+        const img = new Image();
+        img.src = url;
+      }
     }
 
-    // Apple App Store
-    else if (os === 'iPhone') {
+    window.onload = function () {
+      const TEST_MODE = null;
+      const os = TEST_MODE || identifyOS();
 
-      window.location.replace(
-        "https://apps.apple.com/sa/app/albaik/id1514349620"
-      );
-    }
+      console.log("Detected OS:", os);
 
-    // Fallback
-    else {
+      // Fire tracking hit
+      trackHit(os);
 
-      window.location.replace(
-        "https://play.google.com/store/apps/details?id=com.albaik.customer&hl=en"
-      );
-    }
-
-  }, 500);
-};
-</script>
-
+      setTimeout(() => {
+        // Huawei AppGallery
+        if (os === 'Huawei') {
+          window.location.replace(
+            "https://appgallery.huawei.com/app/C115900563"
+          );
+        }
+        // Apple App Store
+        else if (os === 'iPhone') {
+          window.location.replace(
+            "https://apps.apple.com/sa/app/albaik/id1514349620"
+          );
+        }
+        // Android Play Store (and general fallback)
+        else {
+          window.location.replace(
+            "https://play.google.com/store/apps/details?id=com.albaik.customer&hl=en"
+          );
+        }
+      }, 500);
+    };
+  </script>
 </head>
 
 <body>
-<h1>Redirecting...</h1>
-<p>Please wait while we redirect you to the appropriate app store.</p>
+  <h1>Redirecting...</h1>
+  <p>Please wait while we redirect you to the appropriate app store.</p>
 </body>
+
 </html>
