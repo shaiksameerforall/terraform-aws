@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Device Redirect</title>
+
+<script>
+function identifyOS() {
+  const ua = navigator.userAgent || "";
+
+  // iPhone / iPad FIRST
+  const isIOS =
+    /iPhone|iPad|iPod/i.test(ua) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+  // Android & Huawei detection
+  const isAndroid = /Android/i.test(ua);
+  const isHuawei = isAndroid && /HUAWEI|HONOR|HarmonyOS/i.test(ua);
+
+  if (isIOS) return 'iPhone';
+  if (isHuawei) return 'Huawei';
+  if (isAndroid) return 'Android';
+
+  // Desktop / Other OS fallback (matches 1st file logic)
+  if (/Windows/i.test(ua)) return 'Windows';
+  if (/Macintosh|Mac OS X/i.test(ua)) return 'MacOS';
+  if (/Linux/i.test(ua)) return 'Linux';
+
+  return 'Unknown';
+}
+
+// Tracking with distinct file key
+function trackHit(os) {
+  const fileName = "jd69-digitalscreen";
+
+  const url =
+    "https://u2m2i4dbrd.execute-api.eu-central-1.amazonaws.com/prod/track" +
+    "?file=" + encodeURIComponent(fileName) +
+    "&os=" + encodeURIComponent(os);
+
+  const img = new Image();
+  img.src = url;
+}
+
+window.onload = function () {
+  // Production mode: Uses dynamic OS detection
+  const os = identifyOS();
+
+  console.log("Detected OS:", os);
+  console.log("User Agent:", navigator.userAgent);
+
+  // Track hit
+  trackHit(os);
+
+  setTimeout(() => {
+    // Huawei AppGallery
+    if (os === 'Huawei') {
+      window.location.href = "https://appgallery.huawei.com/app/C115900563";
+    }
+    // Android Play Store
+    else if (os === 'Android') {
+      window.location.href = "https://play.google.com/store/apps/details?id=com.albaik.customer&hl=en";
+    }
+    // Apple App Store
+    else if (os === 'iPhone') {
+      window.location.href = "https://apps.apple.com/sa/app/albaik/id1514349620";
+    }
+    // Fallback (Desktop / Windows / Other)
+    else {
+      window.location.href = "https://play.google.com/store/apps/details?id=com.albaik.customer&hl=en";
+    }
+  }, 800);
+};
+</script>
+</head>
+
+<body>
+<h1>Redirecting...</h1>
+<p>Please wait while we redirect you to the appropriate app store.</p>
+</body>
+</html>
