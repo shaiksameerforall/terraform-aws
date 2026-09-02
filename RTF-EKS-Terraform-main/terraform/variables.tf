@@ -1,7 +1,7 @@
 variable "aws_region" {
   description = "AWS region where EKS will be created."
   type        = string
-  default     = "ap-south-1"
+  default     = "eu-central-1"
 }
 
 variable "cluster_name" {
@@ -13,13 +13,13 @@ variable "cluster_name" {
 variable "kubernetes_version" {
   description = "EKS Kubernetes version."
   type        = string
-  default     = "1.30"
+  default     = "1.34"
 }
 
 variable "vpc_cidr" {
   description = "CIDR range for the EKS VPC."
   type        = string
-  default     = "10.20.0.0/16"
+  default     = "172.19.0.0/16"
 }
 
 variable "availability_zones_count" {
@@ -31,7 +31,7 @@ variable "availability_zones_count" {
 variable "node_instance_types" {
   description = "EC2 instance types for the managed node group."
   type        = list(string)
-  default     = ["t3.medium"]
+  default     = ["t3.large"]
 }
 
 variable "desired_node_count" {

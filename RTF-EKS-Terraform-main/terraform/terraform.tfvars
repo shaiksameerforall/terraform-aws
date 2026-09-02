@@ -1,5 +1,5 @@
 # AWS and EKS
-aws_region         = "ap-south-1"
+aws_region         = "eu-central-1"
 cluster_name       = "mulesoft-eks-cluster"
 kubernetes_version = "1.34"
 
