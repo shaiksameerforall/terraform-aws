@@ -41,5 +41,5 @@ uninstall_rtf_on_destroy = true
 tags = {
   Project     = "mulesoft-rtf-eks"
   ManagedBy   = "terraform"
-  Environment = "lab"
+  Environment = "ALBAIK"
 }
