@@ -11,7 +11,7 @@ max_node_count      = 3
 node_disk_size      = 50
 
 # Runtime Fabric DNS
-rtf_domain = "rtf.muleaceacademy.com"
+rtf_domain = "rtf.albaikfoodsystems.com"
 
 # NGINX ingress
 install_nginx_ingress = true
