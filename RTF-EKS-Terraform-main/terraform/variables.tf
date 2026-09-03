@@ -148,6 +148,6 @@ variable "tags" {
   default = {
     Project     = "mulesoft-rtf-eks"
     ManagedBy   = "terraform"
-    Environment = "lab"
+    Environment = "ALBAIK"
   }
 }
