@@ -19,13 +19,13 @@ variable "kubernetes_version" {
 variable "vpc_cidr" {
   description = "CIDR range for the EKS VPC."
   type        = string
-  default     = "172.19.0.0/16"
+  default     = "172.22.0.0/16"
 }
 
 variable "availability_zones_count" {
   description = "Number of AZs to use for subnets."
   type        = number
-  default     = 3
+  default     = 2
 }
 
 variable "node_instance_types" {
@@ -37,19 +37,19 @@ variable "node_instance_types" {
 variable "desired_node_count" {
   description = "Desired number of EKS worker nodes."
   type        = number
-  default     = 3
+  default     = 2
 }
 
 variable "min_node_count" {
   description = "Minimum number of EKS worker nodes."
   type        = number
-  default     = 3
+  default     = 2
 }
 
 variable "max_node_count" {
   description = "Maximum number of EKS worker nodes."
   type        = number
-  default     = 3
+  default     = 2
 }
 
 variable "node_disk_size" {
