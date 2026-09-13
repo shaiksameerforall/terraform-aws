@@ -1,4 +1,5 @@
-# get hit counts 
+# get hit counts using powershell and save data to excel 
+
 terraform {
   required_providers {
     aws = {
