@@ -6,21 +6,25 @@ $TableName  = "HitCounter"
 $Region     = "eu-central-1"
 $OutputFile = "C:\Temp\ALBAIK-app-hits.csv"
 
-Write-Host ""
-Write-Host "============================================" -ForegroundColor Cyan
-Write-Host "DynamoDB HitCounter"
-Write-Host "============================================" -ForegroundColor Cyan
-Write-Host "Table  : $TableName"
-Write-Host "Region : $Region"
-Write-Host "CSV    : $OutputFile"
-Write-Host ""
+function Write-Log($Message) {
+    [Console]::Error.WriteLine($Message)
+}
+
+Write-Log ""
+Write-Log "============================================"
+Write-Log "DynamoDB HitCounter"
+Write-Log "============================================"
+Write-Log "Table  : $TableName"
+Write-Log "Region : $Region"
+Write-Log "CSV    : $OutputFile"
+Write-Log ""
 
 # ------------------------------------------------------------
 # Check AWS CLI
 # ------------------------------------------------------------
 
 if (-not (Get-Command aws -ErrorAction SilentlyContinue)) {
-    Write-Host "ERROR: AWS CLI is not installed." -ForegroundColor Red
+    Write-Log "ERROR: AWS CLI is not installed."
     exit 1
 }
 
@@ -28,18 +32,18 @@ if (-not (Get-Command aws -ErrorAction SilentlyContinue)) {
 # Check AWS credentials
 # ------------------------------------------------------------
 
-Write-Host "Checking AWS credentials..." -ForegroundColor Yellow
+Write-Log "Checking AWS credentials..."
 
 $null = aws sts get-caller-identity --region $Region --no-cli-pager
 
 if ($LASTEXITCODE -ne 0) {
-    Write-Host "ERROR: AWS credentials are invalid." -ForegroundColor Red
+    Write-Log "ERROR: AWS credentials are invalid."
     exit 1
 }
 
-Write-Host ""
-Write-Host "Reading DynamoDB table..." -ForegroundColor Yellow
-Write-Host ""
+Write-Log ""
+Write-Log "Reading DynamoDB table..."
+Write-Log ""
 
 # ------------------------------------------------------------
 # Get all records
@@ -53,7 +57,7 @@ do {
 
     $PageNumber++
 
-    Write-Host "Reading page $PageNumber..." -ForegroundColor Gray
+    Write-Log "Reading page $PageNumber..."
 
     if ($null -eq $ExclusiveStartKey) {
 
@@ -76,7 +80,7 @@ do {
     }
 
     if ($LASTEXITCODE -ne 0) {
-        Write-Host "ERROR: DynamoDB scan failed." -ForegroundColor Red
+        Write-Log "ERROR: DynamoDB scan failed."
         exit 1
     }
 
@@ -105,13 +109,13 @@ do {
 # Check records
 # ------------------------------------------------------------
 
-Write-Host ""
-Write-Host "Total records found: $($AllItems.Count)" -ForegroundColor Green
-Write-Host ""
+Write-Log ""
+Write-Log "Total records found: $($AllItems.Count)"
+Write-Log ""
 
 if ($AllItems.Count -eq 0) {
 
-    Write-Host "No records found." -ForegroundColor Yellow
+    Write-Log "No records found."
     [PSCustomObject]@{
         count = "0"
         file  = "$OutputFile"
@@ -175,18 +179,6 @@ $Records = foreach ($Item in $AllItems) {
     [PSCustomObject]$Record
 }
 
-# ============================================================
-# DISPLAY VALUES IN POWERSHELL
-# ============================================================
-
-Write-Host ""
-Write-Host "============================================" -ForegroundColor Cyan
-Write-Host "DYNAMODB HIT COUNTER VALUES" -ForegroundColor Cyan
-Write-Host "============================================" -ForegroundColor Cyan
-Write-Host ""
-
-$Records | Format-Table -AutoSize | Out-Host
-
 # ------------------------------------------------------------
 # Export CSV
 # ------------------------------------------------------------
@@ -211,23 +203,18 @@ $Records | Export-Csv `
 # Completion
 # ------------------------------------------------------------
 
-Write-Host ""
-Write-Host "============================================" -ForegroundColor Green
-Write-Host "EXPORT COMPLETED" -ForegroundColor Green
-Write-Host "============================================" -ForegroundColor Green
+Write-Log ""
+Write-Log "============================================"
+Write-Log "EXPORT COMPLETED"
+Write-Log "============================================"
+Write-Log "Total records : $($Records.Count)"
+Write-Log "CSV file      : $OutputFile"
+Write-Log ""
 
-Write-Host "Total records : $($Records.Count)"
-Write-Host "CSV file      : $OutputFile"
-Write-Host ""
-
-# Open CSV automatically
-if (Test-Path $OutputFile) {
-    Invoke-Item $OutputFile
-}
-
-# Output JSON for Terraform data.external
+# Output JSON for Terraform data.external to STDOUT
 [PSCustomObject]@{
     count = "$($Records.Count)"
     file  = "$OutputFile"
 } | ConvertTo-Json -Compress
+
 
