@@ -49,6 +49,10 @@ module "eks" {
       min_size     = var.min_node_count
       max_size     = var.max_node_count
       desired_size = var.desired_node_count
+    # Add SSM permission to the node role:
+      iam_role_additional_policies = {
+        AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+      }
 
       labels = {
         workload = "runtime-fabric"
