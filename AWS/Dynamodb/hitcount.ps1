@@ -30,7 +30,7 @@ if (-not (Get-Command aws -ErrorAction SilentlyContinue)) {
 
 Write-Host "Checking AWS credentials..." -ForegroundColor Yellow
 
-aws sts get-caller-identity --region $Region --no-cli-pager
+$null = aws sts get-caller-identity --region $Region --no-cli-pager
 
 if ($LASTEXITCODE -ne 0) {
     Write-Host "ERROR: AWS credentials are invalid." -ForegroundColor Red
@@ -112,6 +112,10 @@ Write-Host ""
 if ($AllItems.Count -eq 0) {
 
     Write-Host "No records found." -ForegroundColor Yellow
+    [PSCustomObject]@{
+        count = "0"
+        file  = "$OutputFile"
+    } | ConvertTo-Json -Compress
     exit 0
 
 }
@@ -181,7 +185,7 @@ Write-Host "DYNAMODB HIT COUNTER VALUES" -ForegroundColor Cyan
 Write-Host "============================================" -ForegroundColor Cyan
 Write-Host ""
 
-$Records | Format-Table -AutoSize
+$Records | Format-Table -AutoSize | Out-Host
 
 # ------------------------------------------------------------
 # Export CSV
@@ -220,3 +224,10 @@ Write-Host ""
 if (Test-Path $OutputFile) {
     Invoke-Item $OutputFile
 }
+
+# Output JSON for Terraform data.external
+[PSCustomObject]@{
+    count = "$($Records.Count)"
+    file  = "$OutputFile"
+} | ConvertTo-Json -Compress
+
